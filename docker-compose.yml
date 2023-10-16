@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+    hostname: nginx
+    depends_on:
+      - adimunawar-betest
+    ports:
+      - 80:80
+    networks:
+      - betest
+      
+  # Database user
+  mongo-user:
+    image: mongo:focal
+    container_name: mongo-user
+    hostname: mongo-user
+    volumes:
+      - "./mongo-user:/data/db"
+    ports:
+      - 27017:27017
+    restart:
+      always
+    networks:
+      - betest
+
+  adimunawar-betest:
+    image: adimunawar-betest
+    container_name: adimunawar-betest
+    hostname: adimunawar-betest
+    build :
+      context: ./adimunawar-betest
+    ports:
+      - 5000:5000
+    depends_on:
+      - mongo-user
+    networks:
+      - betest
+
+networks:
+  betest:
